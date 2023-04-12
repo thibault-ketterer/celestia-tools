@@ -1,6 +1,9 @@
 celestia PayForBlob generator
 
 # tldr
+    git clone https://github.com/thibault-ketterer/celestia-tools/
+    cd pfb-generator
+
     go run submit.go <randomint> <YOURNODEIP> | sh
 
 # PfB generator
