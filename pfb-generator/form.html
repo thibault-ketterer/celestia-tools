@@ -61,7 +61,7 @@
 							$("#theLink").prop("href", newurl);
 							$("#theLink").text("ready");
 							$("#theLink").click(function(){
-								$('#theLink').addClass('wait-cursor');
+					      $('body').addClass('wait-cursor');
 								$('#theLink').remove()
 								$('#theText').text(".........waiting.......like 20seconds.......")
 							});
