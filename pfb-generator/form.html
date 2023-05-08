@@ -19,6 +19,7 @@
           // Prevent the form from submitting normally
           event.preventDefault();
 					$('body').addClass('wait-cursor');
+					$('#sub').remove();
 
           // Get the form data
           const url = $('#url').val();
@@ -107,7 +108,7 @@
       <!--label for="data">Data:</label><br>
       <input type="text" id="data" name="data" value="arandomstring"><br><br-->
 
-      <input type="submit" value="Submit">
+      <input id="sub" type="submit" value="Submit">
     </form>
 
 		1st request
