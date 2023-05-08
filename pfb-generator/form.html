@@ -1,35 +1,120 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Make Request</title>
-		<!-- include jquery -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-</head>
-<body>
-    <h1>Make Request</h1>
-    <form method="POST">
-        <label for="url">URL:</label><br>
-        <input type="text" id="url" name="url"><br>
-        <label for="random_id">random ID:</label><br>
-        <input type="text" id="random_id" name="random_id"><br>
-        <label for="gas_limit">Gas Limit:</label><br>
-        <input type="number" id="gas_limit" name="gas_limit"><br>
-        <label for="fee">Fee:</label><br>
-        <input type="number" id="fee" name="fee"><br>
-        <!--label for="data">Data:</label><br>
-        <textarea id="data" name="data"></textarea><br-->
-        <br>
-        <input type="submit" value="Submit">
-    </form>
+  <head>
+    <meta charset="utf-8">
+    <title>API Call Form</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+.wait-cursor {
+  cursor: wait;
+}
+</style>
     <script>
-        // Set default values for the form fields
-        document.getElementById("random_id").value = Math.floor(Math.random() * 1000000);
-        document.getElementById("gas_limit").value = 80000;
-        document.getElementById("fee").value = 2000;
-        // document.getElementById("data").value = "Hello, world!";
-        document.getElementById("url").value = "celestia.lankou.org";
-        // document.getElementById("url").value = "http://celestia.lankou.org:26659/submit_pfb";
+			var globaldebug;
+
+      $(document).ready(function() {
+				document.getElementById("random_id").value = Math.floor(Math.random() * 1000000);
+        // Submit the form using AJAX
+        $('#myForm').submit(function(event) {
+          // Prevent the form from submitting normally
+          event.preventDefault();
+					$('body').addClass('wait-cursor');
+
+          // Get the form data
+          const url = $('#url').val();
+          const randomId = $('#random_id').val();
+          const gasLimit = $('#gas_limit').val();
+          const fee = $('#fee').val();
+          // const data = $('#data').val();
+
+          // Create the JSON payload
+          const payload = JSON.stringify({
+						url: url,
+            random_id: randomId,
+            gas_limit: gasLimit,
+            fee: fee,
+          });
+            //data: data,
+
+          // Make the AJAX call
+          $.ajax({
+            type: 'POST',
+            url: '/',
+            data: payload,
+            contentType: 'application/json',
+            success: function(data) {
+              // Parse the JSON response
+							console.log(data); // log the response data
+							$("#result").text(JSON.stringify(data));
+							globaldebug = data;
+              // Extract the height and namespace_ids
+              const height = data.height;
+              const namespaceId = data.namespaceId
+              // const namespaceId = 
+
+					    $('body').removeClass('wait-cursor');
+              // Generate the URL string
+              const newurl = `http://${url}:26659/namespaced_shares/${namespaceId}/height/${height}`;
+
+							//avoid CORS problem
+							$("#theLink").prop("href", newurl);
+							$("#theLink").text("ready");
+							$("#theLink").click(function(){
+								$('#theLink').addClass('wait-cursor');
+								$('#theLink').remove()
+								$('#theText').text(".........waiting.......like 20seconds.......")
+							});
+
+              // // Make the API call to get the result
+              // $.ajax({
+              //   type: 'GET',
+              //   url: newurl,
+              //   success: function(data2) {
+							// 		console.log(data2); // log the response data
+              //     // Display the result in a div
+              //     $('#result2').html(data2);
+              //   },
+              //   error: function(jqXHR, textStatus, errorThrown) {
+              //     // Handle the error
+              //     console.error(errorThrown);
+              //   }
+              // });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+              // Handle the error
+							console.log("got error");
+              console.error(errorThrown);
+            }
+          });
+        });
+      });
     </script>
-</body>
+  </head>
+  <body>
+    <form id="myForm">
+      <label for="url">URL:</label><br>
+      <input type="text" id="url" name="url" value="celestia.lankou.org"><br>
+
+      <label for="random_id">Random ID:</label><br>
+      <input type="text" id="random_id" name="random_id" value="12345123"><br>
+
+      <label for="gas_limit">Gas Limit:</label><br>
+      <input type="text" id="gas_limit" name="gas_limit" value="80000"><br>
+
+      <label for="fee">Fee:</label><br>
+      <input type="text" id="fee" name="fee" value="2000"><br>
+
+      <!--label for="data">Data:</label><br>
+      <input type="text" id="data" name="data" value="arandomstring"><br><br-->
+
+      <input type="submit" value="Submit">
+    </form>
+
+		1st request
+		<div style="overflow: y" height="50%" width="90%"><pre id="result"></pre></div>
+		2nd request click here when it appears
+    <a id="theLink" href=""></a>
+    <div id="theText"></div>
+  </body>
 </html>
 

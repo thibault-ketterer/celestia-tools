@@ -44,24 +44,51 @@ func generateRandMessage() string {
 
 func main() {
     http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        // w.Header().Set("Access-Control-Allow-Origin", "*")
+
         if r.Method == "POST" {
-            err := r.ParseForm()
+	    body, err := ioutil.ReadAll(r.Body)
             if err != nil {
-                http.Error(w, "Failed to parse form", http.StatusBadRequest)
+                http.Error(w, "Bad Request", http.StatusBadRequest)
                 return
             }
 
-            url := r.FormValue("url")
-            seedStr := r.FormValue("random_id")
-            gasLimitStr := r.FormValue("gas_limit")
-            feeStr := r.FormValue("fee")
+	    // err := r.ParseForm()
+            // if err != nil {
+            //     http.Error(w, "Failed to parse form", http.StatusBadRequest)
+            //     return
+            // }
+
+	    // Parse the payload as JSON
+            var payload map[string]interface{}
+            err = json.Unmarshal(body, &payload)
+            if err != nil {
+                http.Error(w, "Bad Request", http.StatusBadRequest)
+                return
+            }
+	    
+            url := payload["url"].(string)
+
+            fee, err := strconv.Atoi(payload["fee"].(string))
+            if err != nil {
+                http.Error(w, "Failed to parse fee", http.StatusBadRequest)
+                return
+            }
+
+            gasLimit, err := strconv.Atoi(payload["gas_limit"].(string))
+            if err != nil {
+                http.Error(w, "Failed to parse gas limit", http.StatusBadRequest)
+                return
+            }
+
+            seed, err := strconv.Atoi(payload["random_id"].(string))
+	    if err != nil {
+                http.Error(w, "Bad Request, random_id", http.StatusBadRequest)
+                return
+            }
+
             //data := r.FormValue("data")
 
-	    seed, err := strconv.Atoi(seedStr)
-            if err != nil {
-                http.Error(w, "Failed to parse randid", http.StatusBadRequest)
-                return
-            }
 	    fmt.Printf("seed [%d]\n", seed)
 
 	    rand.Seed(int64(seed))
@@ -72,39 +99,32 @@ func main() {
 	    // generate a random hex-encoded message
 	    msg := generateRandMessage()
 
-            gasLimit, err := strconv.Atoi(gasLimitStr)
-            if err != nil {
-                http.Error(w, "Failed to parse gas limit", http.StatusBadRequest)
-                return
-            }
-
-            fee, err := strconv.Atoi(feeStr)
-            if err != nil {
-                http.Error(w, "Failed to parse fee", http.StatusBadRequest)
-                return
-            }
-
-            // err = makeRequest(url, namespaceID, gasLimit, fee, data)
-            responseBody, err := makeRequest(fmt.Sprintf("http://%s:26659/submit_pfb", url), nID, gasLimit, fee, msg)
-            if err != nil {
-                http.Error(w, fmt.Sprintf("Failed to make request: %s", err), http.StatusInternalServerError)
-                return
-            }
-
-            // response := Response{Message: "Request successful"}
-            // responseJSON, err := json.Marshal(response)
+            fmt.Printf("http://%s:26659/submit_pfb %d %d %d %s", url, nID, gasLimit, fee, msg)
+            // responseBody, err := makeRequest(fmt.Sprintf("http://%s:26659/submit_pfb", url), nID, gasLimit, fee, msg)
             // if err != nil {
-            //     http.Error(w, fmt.Sprintf("Failed to marshal response: %s", err), http.StatusInternalServerError)
+            //     http.Error(w, fmt.Sprintf("Failed to make request: %s", err), http.StatusInternalServerError)
             //     return
             // }
 
             w.Header().Set("Content-Type", "application/json")
             w.WriteHeader(http.StatusOK)
-            w.Write(responseBody)
+
+            // w.Write(responseBody)
+
+	    // mock
+	    // read file out.json
+	    data, err := ioutil.ReadFile("out.json")
+	    if err != nil {
+	        panic(err)
+	    }
+	    w.Write(data)
+
             return
         }
 
         tmpl := template.Must(template.ParseFiles("form.html"))
+//	cess-Control-Allow-Origin'
+	//req.Header.Set("Content-Type", "application/json")
         err := tmpl.Execute(w, nil)
         if err != nil {
             http.Error(w, fmt.Sprintf("Failed to render template: %s", err), http.StatusInternalServerError)
@@ -150,7 +170,24 @@ func makeRequest(url string, namespaceID string, gasLimit int, fee int, data str
 	// Print response body to console
 	fmt.Println(string(respBodyBytes))
 
+	// hack value with the namespaceId
+	var jsonData map[string]interface{}
+        err = json.Unmarshal(respBodyBytes, &jsonData)
+        if err != nil {
+            panic(err)
+        }
+
+        // Add key-value pair to the Go value
+        jsonData["namespaceId"] = namespaceID
+
+        // Marshal the updated Go value back to a JSON byte slice
+        updatedJsonBytes, err := json.Marshal(jsonData)
+        if err != nil {
+            panic(err)
+        }
+	
 	// Return response body
-	return respBodyBytes, nil
+	//return respBodyBytes, nil
+	return updatedJsonBytes, nil
 }
 

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Make Request</title>
+		<!-- include jquery -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Make Request</h1>
+    <form method="POST">
+        <label for="url">URL:</label><br>
+        <input type="text" id="url" name="url"><br>
+        <label for="random_id">random ID:</label><br>
+        <input type="text" id="random_id" name="random_id"><br>
+        <label for="gas_limit">Gas Limit:</label><br>
+        <input type="number" id="gas_limit" name="gas_limit"><br>
+        <label for="fee">Fee:</label><br>
+        <input type="number" id="fee" name="fee"><br>
+        <!--label for="data">Data:</label><br>
+        <textarea id="data" name="data"></textarea><br-->
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <script>
+        // Set default values for the form fields
+        document.getElementById("random_id").value = Math.floor(Math.random() * 1000000);
+        document.getElementById("gas_limit").value = 80000;
+        document.getElementById("fee").value = 2000;
+        // document.getElementById("data").value = "Hello, world!";
+        document.getElementById("url").value = "celestia.lankou.org";
+        // document.getElementById("url").value = "http://celestia.lankou.org:26659/submit_pfb";
+    </script>
+</body>
+</html>
+
