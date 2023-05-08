@@ -100,24 +100,25 @@ func main() {
 	    msg := generateRandMessage()
 
             fmt.Printf("http://%s:26659/submit_pfb %d %d %d %s", url, nID, gasLimit, fee, msg)
-            // responseBody, err := makeRequest(fmt.Sprintf("http://%s:26659/submit_pfb", url), nID, gasLimit, fee, msg)
-            // if err != nil {
-            //     http.Error(w, fmt.Sprintf("Failed to make request: %s", err), http.StatusInternalServerError)
-            //     return
-            // }
+            responseBody, err := makeRequest(fmt.Sprintf("http://%s:26659/submit_pfb", url), nID, gasLimit, fee, msg)
+            if err != nil {
+                http.Error(w, fmt.Sprintf("Failed to make request: %s", err), http.StatusInternalServerError)
+                return
+            }
 
             w.Header().Set("Content-Type", "application/json")
             w.WriteHeader(http.StatusOK)
 
-            // w.Write(responseBody)
+            w.Write(responseBody)
 
+	    // OR
 	    // mock
 	    // read file out.json
-	    data, err := ioutil.ReadFile("out.json")
-	    if err != nil {
-	        panic(err)
-	    }
-	    w.Write(data)
+	    // data, err := ioutil.ReadFile("out.json")
+	    // if err != nil {
+	    //     panic(err)
+	    // }
+	    // w.Write(data)
 
             return
         }
