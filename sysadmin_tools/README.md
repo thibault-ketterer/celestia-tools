@@ -79,6 +79,7 @@ replace service in systemd with call to start.sh, see above
 
 ## light node data cleaner
 purpose: save from miscommand / mistakes on light nodes
+
     $ bash clean_data.sh
 
 
