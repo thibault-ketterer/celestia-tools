@@ -1,5 +1,6 @@
 # celestia admin tools for nodes
 purpose: auto upgrade celestia node (work for light, maybe other types)
+
 - install the systemd file (/!\ overwrite it)
 - stop previous celestia node
 - checkout last version of celestia (based on tags order by version, sort -V)
@@ -10,6 +11,7 @@ purpose: auto upgrade celestia node (work for light, maybe other types)
 - show status
 - shows version
 
+It looks like that
     $ bash upgrade_celestia.sh
 
     updating system config [/etc/systemd/system/celestia-lightd.service] 
