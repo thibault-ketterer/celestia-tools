@@ -12,6 +12,7 @@ purpose: auto upgrade celestia node (work for light, maybe other types)
 - shows version
 
 It looks like that
+
     $ bash upgrade_celestia.sh
 
     updating system config [/etc/systemd/system/celestia-lightd.service] 
