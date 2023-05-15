@@ -65,7 +65,11 @@ It looks like that
 
 
 # start and loop over all known nodes
-purpose: loop over all nodes in case of full node failure
+purpose: loop over all nodes in case of full node failure, show the node in wide characters in the console, see above
+
+if every nodes fails, it exits
+
+    # apt-get install figlet
 
     $ bash start.sh
 
