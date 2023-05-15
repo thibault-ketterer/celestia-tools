@@ -1,5 +1,14 @@
 # celestia admin tools for nodes
-purposer auto upgrade celestia node (work for light, maybe other types)
+purpose: auto upgrade celestia node (work for light, maybe other types)
+- install the systemd file (/!\ overwrite it)
+- stop previous celestia node
+- checkout last version of celestia (based on tags order by version, sort -V)
+- compiles it
+- installs it
+- upgrade config if needed (light only)
+- start the service again
+- show status
+- shows version
 
     $ bash upgrade_celestia.sh
 
@@ -58,7 +67,7 @@ purpose: loop over all nodes in case of full node failure
 
     $ bash start.sh
 
-replace service in systemd with call to start.sh
+replace service in systemd with call to start.sh, see above
 
 # small utils
 
